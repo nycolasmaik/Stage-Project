@@ -1,0 +1,121 @@
+/* Variáveis de Design - Tons Sólidos */
+:root {
+  --primary: #1e293b;    /* Azul Marinho Sólido */
+  --secondary: #64748b;  /* Cinza Azulado */
+  --bg-page: #d3d3d3;    /* Fundo quase branco */
+  --white: #ffffff;
+  --success: #10b981;    /* Verde Esmeralda */
+  --danger: #ef4444;     /* Vermelho */
+  --border: #e2e8f0;
+  --text: #0f172a;
+}
+
+body {
+  background-color: var(--bg-page);
+  color: var(--text);
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  margin: 0;
+}
+
+/* --- HOME --- */
+.home-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.menu-card {
+  background: var(--white);
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+  border-top: 8px solid var(--primary); /* Barra sólida no topo */
+  text-align: center;
+}
+
+/* Container do botão para centralizar */
+.button-group {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+/* O botão 'Entrar' */
+.nav-button {
+  display: block;
+  width: 100%; /* Faz o botão ocupar a largura do card */
+  max-width: 280px; /* Mas não deixa ele gigante em telas largas */
+  background-color: #1e293b; /* Azul Marinho Sólido */
+  color: #ffffff;
+  text-decoration: none;
+  padding: 16px 24px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Efeito ao passar o mouse */
+.nav-button:hover {
+  background-color: #334155; /* Um tom de azul levemente mais claro */
+  transform: translateY(-2px); /* Sobe um pouquinho (efeito de profundidade) */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Efeito ao clicar */
+.nav-button:active {
+  transform: translateY(0);
+}
+
+
+/* --- GRID / TABELA --- */
+.grid-container {
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.custom-table thead {
+  background-color: var(--primary);
+  color: white;
+}
+
+.custom-table th {
+  padding: 15px;
+  text-align: left;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+}
+
+.custom-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* --- BOTÕES GERAIS --- */
+.btn-action {
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.btn-primary { background-color: var(--primary); color: white; }
+.btn-success { background-color: var(--success); color: white; }
+.btn-danger { background-color: var(--danger); color: white; }
+.btn-outline { background-color: white; border: 1px solid var(--border); color: var(--secondary); }
+
+.btn-action:hover { opacity: 0.85; }
