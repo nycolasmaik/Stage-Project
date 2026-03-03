@@ -1,4 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import AreasCadastradas from "./pages/AreasCadastradas";
 import "./App.css";
 
@@ -24,6 +27,20 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/areas" element={<AreasCadastradas />} />       
       </Routes>
+
+      {/* Pop-Up de alerta para o usuário */}
+      <ToastContainer 
+        position="top-right"
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored" // Isso deixa o pop-up com a cor forte (verde/vermelho)
+      />
     </Router>
   );
 }

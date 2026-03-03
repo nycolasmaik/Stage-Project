@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
 import Grid from "../components/Grid";
 import Modal from "../components/Modal";
 import ArvoreProcessos from "../components/ArvoreProcessos";
-import { useNavigate } from "react-router-dom";
 
+/* --- Definição do service base (Endereço do BackEnd) --- */
 const serviceBase = "https://localhost:7064";
 
 export default function ListagemAreas() {
@@ -15,7 +17,6 @@ export default function ListagemAreas() {
   const [ModalEditar, setModalEditarOpen] = useState(false);
   const [ModalDeletar, setModalDeletarOpen] = useState(false);
   const [ModalArvore, setModalArvoreOpen] = useState(false);
-  //const [ModalCriarProcesso, setModalCriarProcessoOpen] = useState(false);
 
   const [nomeAreaCriacao, setNomeAreaCriacao] = useState("");
   const [areaParaEditar, setAreaParaEditar] = useState(null);
@@ -25,6 +26,8 @@ export default function ListagemAreas() {
 
   const [ModalProcesso, setModalProcessoOpen] = useState(false);
   const [modoEdicaoProcesso, setModoEdicaoProcesso] = useState(false);
+  const [ModalDeletarProcesso, setModalDeletarProcesso] = useState(false);
+  const [NomeProcessoDeletar, setNomeProcessoDeletar] = useState("");  
   const [formProcesso, setFormProcesso] = useState({
     id: null,
     idArea: null,
@@ -38,6 +41,7 @@ export default function ListagemAreas() {
     status: "Ativo"
   });
 
+  /* --- Função para abrir o modal de criação de processos e setar variaveis para a ação--- */
   const AbrirModalCriarProcesso = (idArea, idPai = null) => {    
     setModoEdicaoProcesso(false);
     setFormProcesso({
@@ -55,56 +59,73 @@ export default function ListagemAreas() {
     setModalProcessoOpen(true);
   };
 
+  /* --- Função para abrir o modal de edição de processos e setar variaveis para a ação OBS: Herda as informações do processo que o usuário deseja alterar --- */
   const AbrirModalEditarProcesso = (processo) => {
     setModoEdicaoProcesso(true);
-    setFormProcesso({ ...processo }); // Carrega os dados do processo clicado
+    setFormProcesso({ ...processo });
     setModalProcessoOpen(true);
   };
 
+  /* --- Função para abrir o modal de edição de processos e setar variaveis para a ação OBS: Herda as informações do processo que o usuário deseja alterar --- */
+  const AbrirModalDeletarProcesso = (processo) => {
+    setModalDeletarProcesso(true);
+    setNomeProcessoDeletar({ ...processo.nome });    
+  };
+  
+  /* ---FUNÇÃO QUE CHAMA API PARA ATUALIZAR OU CRIAR UM PROCESSO --OBS: VALIDA SE A AÇÃO É UMA EDIÇÃO OU UMA CRIAÇÃO --- */
   const SalvarProcesso = async (e) => {
     e.preventDefault();
     try {
       if (modoEdicaoProcesso) {
-        await axios.put(`${serviceBase}/api/UpdateProcess?id=${formProcesso.id}`, formProcesso);
+        await axios.put(`${serviceBase}/api/UpdateProcess?id=${formProcesso.id}`, formProcesso)
+          .then((response) => toast.success(response.data.message))
+          .catch((error) => toast.error(error.data.message)
+        );
+
       } else {
-        await axios.post(`${serviceBase}/api/CreateProcess`, formProcesso);
+        await axios.post(`${serviceBase}/api/CreateProcess`, formProcesso)
+          .then((response) => toast.success(response.data.message))
+          .catch((error) => toast.error(error.data.message)
+        );
       }
+
       setModalProcessoOpen(false);
-      VerProcessos(formProcesso.idArea); // Recarrega a árvore para ver as mudanças
-    } catch (err) {
-      console.error("Erro ao salvar processo:", err);
+      VerProcessos(formProcesso.idArea);
+    } catch (error) {
+      console.error("Erro ao concluir ação:", err);
     }
   };
 
+  /* ---FUNÇÃO QUE CHAMA API PARA DELETAR UM PROCESSO --- */
   const DeletarProcesso = async (id, idArea) => {
-  if (window.confirm("Deseja realmente excluir este processo?")) {
-    try {
-      await axios.delete(`${serviceBase}/api/ProcessoById?id=${id}`);
-      VerProcessos(idArea); // Recarrega a árvore
+   try {
+      await axios.delete(`${serviceBase}/api/ProcessoById?id=${id}`)
+        .then((response) => toast.success(response.data.message))
+        .catch((error) => toast.error(error.data.message)
+      );
+      
+      VerProcessos(idArea);
     } catch (err) {
-      alert("Erro ao deletar: verifique se existem subprocessos vinculados.", err);
+      console.error("Erro ao remover:", err);
     }
-  }
 };
 
   const colunas = [];
 
-  /* ---GET TODAS AS ÁREAS CADASTRADAS--- */
+  /* --- Função para buscar todas as áreas cadastradas --- */
   const carregarAreas = () => {
-    axios
-      .get(`${serviceBase}/api/AllArea`)
+    axios.get(`${serviceBase}/api/AllArea`)
       .then((res) => setAreas(res.data))
-      .catch((err) => console.error(err));
+      .catch((err) => console.error(err)
+    );
   };
-
+ /* --- Chamar a função das áreas caso ocorra alguma mudança - Renderiza -- */
   useEffect(() => {
     carregarAreas();
   }, []);
 
-  {
-    /* ---CRIAR NOVA ÁREA--- */
-  }
-
+  
+  /* --- FUNÇÃO QUE CHAMA API PARA CRIAR NOVA ÁREA --- */
   const CriarNovaArea = async (e) => {
     e.preventDefault();
     try {
@@ -113,7 +134,10 @@ export default function ListagemAreas() {
         id_usuario_criacao: 0,
       };
 
-      await axios.post(`${serviceBase}/api/CreateArea`, dados);
+      await axios.post(`${serviceBase}/api/CreateArea`, dados)
+        .then((response) => toast.success(response.data.message))
+        .catch((error) => toast.error(error.data.message)
+      );
 
       setModalCriarOpen(false);
       setNomeAreaCriacao("");
@@ -124,15 +148,14 @@ export default function ListagemAreas() {
     }
   };
 
-  {
-    /* ---EDITAR ÁREA--- */
-  }
+  /* --- FUNÇÃO PARA ABRIR O MODAL DE EDIÇÃO DE ÁREA E SETAR AS VARIAVEIS --- */
   const Editar = (area) => {
     setAreaParaEditar(area);
     setNovoNome(area.nome);
     setModalEditarOpen(true);
   };
 
+  /* --- FUNÇÃO QUE CHAMA API PARA SALVAR A ATUALIZAÇÃO DE UMA ÁREA --- */
   const SalvarEdicao = async (e) => {
     e.preventDefault();
     try {
@@ -142,7 +165,10 @@ export default function ListagemAreas() {
         id_usuario_criacao: 0,
       };
 
-      await axios.put(`${serviceBase}/api/UpdateArea?id=${dados.id}`, dados);
+      await axios.put(`${serviceBase}/api/UpdateArea?id=${dados.id}`, dados)
+        .then((response) => toast.success(response.data.message))
+        .catch((error) => toast.error(error.data.message)
+      );
 
       setModalEditarOpen(false);
 
@@ -152,14 +178,14 @@ export default function ListagemAreas() {
     }
   };
 
-  {
-    /* ---DELETAR AREA--- */
-  }
+  
+  /* --- FUNÇÃO PARA ABRIR O MODAL PARA DELETAR ÁREA E SETAR AS VARIAVEIS --- */  
   const Deletar = (area) => {
     setAreaParaDeletar(area);
     setModalDeletarOpen(true);
   };
 
+   /* --- FUNÇÃO QUE CHAMA API PARA DELETAR UMA ÁREA --- */
   const DeletarArea = async (e) => {
     e.preventDefault();
     try {
@@ -167,7 +193,10 @@ export default function ListagemAreas() {
         id: areaParaDeletar.id,
       };
 
-      await axios.delete(`${serviceBase}/api/AreaById?id=${dados.id}`);
+      await axios.delete(`${serviceBase}/api/AreaById?id=${dados.id}`)      
+        .then((response) => toast.success(response.data.message))
+        .catch((error) => toast.error(error.data.message)
+      );
 
       setModalDeletarOpen(false);
 
@@ -177,6 +206,7 @@ export default function ListagemAreas() {
     }
   };
 
+  /* --- FUNÇÃO QUE CHAMA API QUE DA UM GET EM TODOS OS PROCESSOS DE UMA ÁREA --- */
   const VerProcessos = async (idArea) => {
     try { 
       const res = await axios.get(
@@ -184,8 +214,10 @@ export default function ListagemAreas() {
       );
       setProcessosDaArea(res.data);
       setModalArvoreOpen(true);
-    } catch (err) {
-      console.error("Erro ao carregar árvore:", err);
+    } catch (error) {
+      const msg = error.response?.data?.message || "Erro ao carregar a árvore de processos";
+      toast.error(msg);
+      setModalArvoreOpen(false);
     }
   };
 
@@ -210,7 +242,7 @@ export default function ListagemAreas() {
           </button>
         </div>
       </div>
-      {/* --- GRID ÁREAS CADASTRADAS --- */}
+      {/* --- GRID DE ÁREAS CADASTRADAS --- */}
       <Grid
         data={areas}
         columns={colunas}
@@ -321,7 +353,7 @@ export default function ListagemAreas() {
                 processo={p}
                 onAdd={AbrirModalCriarProcesso}
                 onEdit={AbrirModalEditarProcesso}
-                onDelete={(id) => DeletarProcesso(id, p.idArea)}
+                onDelete={AbrirModalDeletarProcesso}
               />
             ))
           ) : (
@@ -329,71 +361,99 @@ export default function ListagemAreas() {
           )}
         </div>
       </Modal>
-         
-        <Modal
-        isOpen={ModalProcesso}
-        onClose={() => setModalProcessoOpen(false)}
-        title={modoEdicaoProcesso ? "Editar Processo" : "Novo Processo / Subprocesso"}
-      >
-        <div style={scrollContainerStyle}>
-          <form onSubmit={SalvarProcesso}>
-            <div style={{ display: 'grid', gap: '10px' }}>
-              <label style={labelStyle}>Nome:</label>
-              <input 
-                style={inputStyle}  
-                value={formProcesso.nome} 
-                onChange={e => setFormProcesso({...formProcesso, nome: e.target.value})} 
-                required 
-              />
 
-              <label style={labelStyle}>Descrição:</label>
-              <textarea 
-                style={inputStyle} 
-                value={formProcesso.descricao} 
-                onChange={e => setFormProcesso({...formProcesso, descricao: e.target.value})} 
-              />
+      {/* --- MODAL PARA CRIAR E ATUALZIAR UM PROCESSO (CÓDIGO REUTILIZADO) --- */}
+      <Modal
+      isOpen={ModalProcesso}
+      onClose={() => setModalDeletarProcesso(false)}
+      title={"Deletar Processo / Subprocesso"}
+    >
+      <div style={scrollContainerStyle}>
+        <form onSubmit={DeletarProcesso}>
+          <div style={{ display: 'grid', gap: '10px' }}>
+            <label style={labelStyle}>Nome:</label>
+            <input 
+              style={inputStyle}  
+              value={formProcesso.nome} 
+              onChange={e => setFormProcesso({...formProcesso, nome: e.target.value})} 
+              required 
+            />
 
-              <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-                <label>
-                  <input 
-                    type="checkbox" 
-                    checked={formProcesso.isSistemico} 
-                    onChange={e => setFormProcesso({...formProcesso, isSistemico: e.target.checked})} 
-                  /> É Sistêmico?
-                </label>
-              </div>
+            <label style={labelStyle}>Descrição:</label>
+            <textarea 
+              style={inputStyle} 
+              value={formProcesso.descricao} 
+              onChange={e => setFormProcesso({...formProcesso, descricao: e.target.value})} 
+            />
 
-              <label style={labelStyle}>Ferramentas:</label>
-              <input 
-                style={inputStyle} 
-                value={formProcesso.ferramentas} 
-                onChange={e => setFormProcesso({...formProcesso, ferramentas: e.target.value})} 
-              />
-              <label style={labelStyle}>Responsáveis:</label>
-              <input 
-                style={inputStyle} 
-                value={formProcesso.responsaveis} 
-                onChange={e => setFormProcesso({...formProcesso, responsaveis: e.target.value})} 
-              />
-              <label style={labelStyle}>Documentações:</label>
-              <input 
-                style={inputStyle} 
-                value={formProcesso.documentacoes} 
-                onChange={e => setFormProcesso({...formProcesso, documentacoes: e.target.value})} 
-              />
+            <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+              <label>
+                <input 
+                  type="checkbox" 
+                  checked={formProcesso.isSistemico} 
+                  onChange={e => setFormProcesso({...formProcesso, isSistemico: e.target.checked})} 
+                /> É Sistêmico?
+              </label>
             </div>
 
+            <label style={labelStyle}>Ferramentas:</label>
+            <input 
+              style={inputStyle} 
+              value={formProcesso.ferramentas} 
+              onChange={e => setFormProcesso({...formProcesso, ferramentas: e.target.value})} 
+            />
+            <label style={labelStyle}>Responsáveis:</label>
+            <input 
+              style={inputStyle} 
+              value={formProcesso.responsaveis} 
+              onChange={e => setFormProcesso({...formProcesso, responsaveis: e.target.value})} 
+            />
+            <label style={labelStyle}>Documentações:</label>
+            <input 
+              style={inputStyle} 
+              value={formProcesso.documentacoes} 
+              onChange={e => setFormProcesso({...formProcesso, documentacoes: e.target.value})} 
+            />
+          </div>
+
+          <div style={footerButtons}>
+            <button type="submit" style={btnSalvarStyle}>
+              {modoEdicaoProcesso ? "Atualizar" : "Cadastrar"}
+            </button>
+            <button type="button" onClick={() => setModalProcessoOpen(false)} style={btnCancelarStyle}>
+              Cancelar
+            </button>
+          </div>
+        </form>
+        </div>
+      </Modal>
+
+      {/* --- MODAL PARA CONFIRMAR SE DESEJA DELETAR PROCESO --- */}
+      <Modal
+        isOpen={ModalDeletar}
+        onClose={() => setModalDeletarProcesso(false)}
+        title="Deletar Processo / Subprocesso"
+      >
+        <form onSubmit={DeletarProcesso}>
+          <label>
+            Tem certeza que deseja deletar a área{" "}<strong>{NomeProcessoDeletar}</strong>?
+          </label>
+          <div style={{ display: "flex", gap: "10px" }}>
             <div style={footerButtons}>
               <button type="submit" style={btnSalvarStyle}>
-                {modoEdicaoProcesso ? "Atualizar" : "Cadastrar"}
+                Salvar
               </button>
-              <button type="button" onClick={() => setModalProcessoOpen(false)} style={btnCancelarStyle}>
+              <button
+                type="button"
+                onClick={() => setModalDeletarProcesso(false)}
+                style={btnCancelarStyle}
+              >
                 Cancelar
               </button>
             </div>
-          </form>
           </div>
-        </Modal>
+        </form>
+      </Modal>
         
     </div>
   );
