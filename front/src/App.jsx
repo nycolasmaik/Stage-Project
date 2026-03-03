@@ -12,7 +12,7 @@ function Home() {
         <h1>MAPEAMENTO DE PROCESSOS POR ÁREA</h1>
         <div className="button-group">
           <Link to="/areas" className="nav-button">
-            ENTRAR NO SISTEMA
+            ENTRAR
           </Link>
         </div>
       </div>
