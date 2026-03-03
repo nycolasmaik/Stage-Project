@@ -1,8 +1,8 @@
 # Stage Project 🚀
 
-Projeto desenvolvido e dedicado a Case Tech da Stage Consulting. 
+Projeto desenvolvido e dedicado ao Case Tech da Stage Consulting. 
 
-O projeto visa a criação de processos e subprocessos separados por área/departamento.
+O projeto visa a criação de processos e subprocessos separados por área/departamento de uma empresa, visando a organização clara e visual.
 
 A aplicação possui um back-end em .NET e um front-end moderno com React + Vite.
 
@@ -28,6 +28,8 @@ O repositório está dividido em duas partes principais:
 * Vite (Build tool)
 * Axios (Consumo de API)
 * React Router Dom (Navegação)
+
+---
 
 ## 🚀 Como Executar o Projeto
 ### 1. Rodando o Back-end
