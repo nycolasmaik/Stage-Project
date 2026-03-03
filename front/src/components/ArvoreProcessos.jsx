@@ -48,7 +48,7 @@ export default function ProcessosArvore({ processo, onAdd, onEdit, onDelete }) {
             title="Deletar"
             onClick={(e) => {
               e.stopPropagation();
-              onDelete(processo.id);
+              onDelete(processo);
             }}
             style={btnDeleteStyle}
           >

@@ -1,5 +1,5 @@
 const DataTable = ({ data, onEdit, onDelete, onCreateProcess, onListProcesses }) => {
-  if (!data || data.length === 0) return <p>Nenhum dado encontrado.</p>;
+  if (!data || data.length === 0) return <p>Nenhuma área encontrada.</p>;
   const columns = Object.keys(data[0]);
 
   return (

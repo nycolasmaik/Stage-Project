@@ -140,12 +140,15 @@ namespace Stage_API.Controllers
 
             await _dbContext.SaveChangesAsync();
 
-            return Ok(new { message = "Processo cadastrado com sucesso!" });
+            return Ok(new { message = "Processo atualizado com sucesso!" });
         }
 
         [HttpDelete("/api/ProcessoById")]
         public async Task<IActionResult> DeleteProcess(int Id)
         {
+            var subprocessos = _dbContext.Processo.Where(p => p.IdPai == Id);
+            _dbContext.Processo.RemoveRange(subprocessos);
+
             var processo = await _dbContext.Processo.FindAsync(Id);
 
             if (processo == null) return NotFound(new { message = "Processo não encontrado." });

@@ -22,7 +22,7 @@ namespace Stage_API.Controllers
         {
             var areas = await _dbContext.Area.ToListAsync();
 
-            if (areas == null || areas.Count == 0) { return NotFound(new { message = "Áreas não encontradas na base." }); }
+            if (areas == null || areas.Count == 0) { return Ok(new { message = "Áreas não encontradas na base." }); }
 
             var areasFormatadas = new List<object>();
 
@@ -91,10 +91,21 @@ namespace Stage_API.Controllers
 
             if (area == null) return NotFound(new { message = "Área não encontrada." });
 
-            _dbContext.Area.Remove(area);
-            await _dbContext.SaveChangesAsync();
+            var processosDaArea = _dbContext.Processo.Where(p => p.IdArea == Id).ToList();                       
 
-            return Ok(new { message = $"Área removida com sucesso!" });
+            _dbContext.Processo.RemoveRange(processosDaArea);
+
+            _dbContext.Area.Remove(area);
+
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+                return Ok(new { message = $"Área e todos os seus processos foram removidos com sucesso!" });
+            }
+            catch (Exception error)
+            {
+                return BadRequest(new { message = "Erro ao deletar: " + error.Message });
+            }
         }
     }
 
