@@ -28,6 +28,7 @@ O repositório está dividido em duas partes principais:
 * Vite (Build tool)
 * Axios (Consumo de API)
 * React Router Dom (Navegação)
+* React Toastify (Para notificações de sucesso/alerta)
 
 ---
 
@@ -41,7 +42,7 @@ As API's estaram disponiveis no Swagger no endereço `https://localhost:7064/`
 
 ### 2. Rodando o Front-end
 1. Navegue até a pasta `front`.
-2. Instale as dependencias `npm install`, `npm install axios` e `npm install react-router-dom`
+2. Instale as dependencias `npm install`, `npm install axios`, `npm install react-router-dom` e `npm install react-toastify`
 3. NO terminal rode o comando:
    `npm run dev`
 O Front estará disponivel no endereço `https://localhost:5173/`
