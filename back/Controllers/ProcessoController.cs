@@ -25,7 +25,7 @@ namespace Stage_API.Controllers
                 .Where(p => p.IdArea == IdArea && p.IdPai == null)
                 .ToListAsync();
 
-            if (processos == null || processos.Count == 0) { return NotFound(new { message = "Processos não encontradas na base." }); }
+            if (processos == null || processos.Count == 0) { return NotFound(new { message = "Processos não encontrados na base." }); }
 
             var processosArea = new List<object>();
 
