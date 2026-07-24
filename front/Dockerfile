@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Copia todo o código do front e gera a pasta de distribuição (dist ou build)
+# Copia todo o código do front e gera a pasta de distribuição
 COPY . .
 RUN npm run build
 
@@ -21,8 +21,10 @@ WORKDIR /usr/share/nginx/html
 # Limpa os arquivos padrão do Nginx
 RUN rm -rf ./*
 
+# Copia configuração customizada do Nginx (com try_files e proxy da API)
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 # Copia os arquivos compilados do estágio de build para o Nginx
-# NOTA: Se o seu projeto usa Vite, a pasta gerada é 'dist'. Se for Create React App, mude para 'build'.
 COPY --from=build /app/dist .
 
 # Expõe a porta 80 do container
