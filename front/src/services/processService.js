@@ -2,7 +2,7 @@ import { api } from './api';
 
 export const processoService = {
   getByArea: async (idArea) => {
-    const response = await api.get(`/GetProcess?IdArea=${idArea}`);
+    const response = await api.get(`api/GetProcess?IdArea=${idArea}`);
     return response;
   },
 

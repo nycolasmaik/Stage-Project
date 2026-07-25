@@ -30,14 +30,14 @@ namespace Stage_API.Controllers
             {
                 var obj = new
                 {
-                    Id = area.Id,
-                    Nome = area.Nome                                    
+                    Id = area.id,
+                    Nome = area.nome                                    
                 };
 
                 areasFormatadas.Add(obj);
             }
 
-            return Ok(areasFormatadas);
+            return Ok(areas);
         }
 
         [HttpGet("/api/AreaById")]
@@ -60,8 +60,8 @@ namespace Stage_API.Controllers
 
             var novaArea = new Area
             {
-                Nome = atributes.Nome,               
-                DataCriacao = DateTime.Now
+                nome = atributes.Nome,               
+                data_criacao = DateTime.Now
             };
 
             _dbContext.Area.Add(novaArea);
@@ -77,7 +77,7 @@ namespace Stage_API.Controllers
 
             if (area == null) { return NotFound(new { message = "Área não encontrada na base de dados." }); }
 
-            if (!string.IsNullOrEmpty(atributes.Nome)) area.Nome = atributes.Nome;            
+            if (!string.IsNullOrEmpty(atributes.Nome)) area.nome = atributes.Nome;            
 
             await _dbContext.SaveChangesAsync();
 
@@ -91,7 +91,7 @@ namespace Stage_API.Controllers
 
             if (area == null) return NotFound(new { message = "Área não encontrada." });
 
-            var processosDaArea = _dbContext.Processo.Where(p => p.IdArea == Id).ToList();                       
+            var processosDaArea = _dbContext.Processo.Where(p => p.area_id == Id).ToList();                       
 
             _dbContext.Processo.RemoveRange(processosDaArea);
 

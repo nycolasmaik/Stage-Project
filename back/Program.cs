@@ -2,14 +2,15 @@ using Microsoft.EntityFrameworkCore;
 using Stage_API.Data;
 using System.Text.Json.Serialization;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
-// GET na conexão do banco MySQL
+// GET na conexão do banco (PostgreSQL)
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-//Referencia do Banco de Dados (MySQL)
+//Referencia do Banco de Dados (PostgreSQL)
 builder.Services.AddDbContext<AppDb>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+    options.UseNpgsql(connectionString));
 
 builder.Services.AddCors(options =>
 {

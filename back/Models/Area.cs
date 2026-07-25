@@ -4,13 +4,13 @@ using System.Text.Json.Serialization;
 
 namespace Stage_API.Models
 {
-    [Table("Areas")]
+    [Table("areas")]
     public class Area
     {
         [Key]
-        public int Id { get; set; }
-        public string Nome { get; set; } = string.Empty;
-        public DateTime? DataCriacao { get; set; }        
+        public int id { get; set; }
+        public string nome { get; set; } = string.Empty;
+        public DateTime? data_criacao { get; set; }        
     }
     public class AreaCreateDTO
     {

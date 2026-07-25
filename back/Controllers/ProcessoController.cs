@@ -22,7 +22,7 @@ namespace Stage_API.Controllers
         public async Task<ActionResult<Processo>> GetProcess(int IdArea)
         {
             var processos = await _dbContext.Processo
-                .Where(p => p.IdArea == IdArea && p.IdPai == null)
+                .Where(p => p.area_id == IdArea && p.processo_pai_id == null)
                 .ToListAsync();
 
             if (processos == null || processos.Count == 0) { return NotFound(new { message = "Processos não encontrados na base." }); }
@@ -33,17 +33,17 @@ namespace Stage_API.Controllers
             foreach (Processo item in processos)
             {
                 ProcessoDetailDTO processoDetalhado = new ProcessoDetailDTO();
-                processoDetalhado.Id = item.Id;
-                processoDetalhado.IdArea = item.IdArea;
-                processoDetalhado.IdPai = item.IdPai;
-                processoDetalhado.Nome = item.Nome;
-                processoDetalhado.Descricao = item.Descricao;
-                processoDetalhado.Ferramentas = item.Ferramentas;
-                processoDetalhado.Responsaveis = item.Responsaveis;
-                processoDetalhado.Documentacoes = item.Documentacoes;
-                processoDetalhado.IsSistemico = item.IsSistemico;
-                processoDetalhado.Status = item.Status;
-                processoDetalhado.SubProcessos = GetSubProcessos(item.Id);                
+                processoDetalhado.Id = item.id;
+                processoDetalhado.IdArea = item.area_id;
+                processoDetalhado.IdPai = item.processo_pai_id;
+                processoDetalhado.Nome = item.nome;
+                processoDetalhado.Descricao = item.descricao;
+                processoDetalhado.Ferramentas = item.ferramentas;
+                processoDetalhado.Responsaveis = item.responsaveis;
+                processoDetalhado.Documentacoes = item.documentos;
+                processoDetalhado.IsSistemico = item.is_sistemico;
+                processoDetalhado.Status = item.status;
+                processoDetalhado.SubProcessos = GetSubProcessos(item.id);                
 
                 processosArea.Add(processoDetalhado);
             }
@@ -54,22 +54,22 @@ namespace Stage_API.Controllers
 
         private List<ProcessoDetailDTO> GetSubProcessos(int id)
         {
-            var subProcessos = _dbContext.Processo.Where(p => p.IdPai == id).ToList();
+            var subProcessos = _dbContext.Processo.Where(p => p.processo_pai_id == id).ToList();
 
 
             return subProcessos.Select(item => new ProcessoDetailDTO
             {
-                Id = item.Id,
-                IdArea = item.IdArea,
-                IdPai = item.IdPai,
-                Nome = item.Nome,
-                Descricao = item.Descricao,
-                Ferramentas = item.Ferramentas,
-                Responsaveis = item.Responsaveis,
-                Documentacoes = item.Documentacoes,
-                IsSistemico = item.IsSistemico,
-                Status = item.Status,
-                SubProcessos = GetSubProcessos(item.Id)
+                Id = item.id,
+                IdArea = item.area_id,
+                IdPai = item.processo_pai_id,
+                Nome = item.nome,
+                Descricao = item.descricao,
+                Ferramentas = item.ferramentas,
+                Responsaveis = item.responsaveis,
+                Documentacoes = item.documentos,
+                IsSistemico = item.is_sistemico,
+                Status = item.status,
+                SubProcessos = GetSubProcessos(item.id)
             }).ToList();
         }
 
@@ -94,16 +94,16 @@ namespace Stage_API.Controllers
 
             var novoProcesso = new Processo
             {
-                IdArea = atributes.IdArea,
-                IdPai = atributes.IdPai,
-                Nome = atributes.Nome,
-                Descricao = atributes.Descricao,
-                Ferramentas = atributes.Ferramentas,
-                Responsaveis = atributes.Responsaveis,
-                Documentacoes = atributes.Documentacoes,
-                IsSistemico = atributes.IsSistemico,
-                Status = atributes.Status,
-                DataCriacao = DateTime.Now
+                area_id = atributes.IdArea,
+                processo_pai_id = atributes.IdPai,
+                nome = atributes.Nome,
+                descricao = atributes.Descricao,
+                ferramentas = atributes.Ferramentas,
+                responsaveis = atributes.Responsaveis,
+                documentos = atributes.Documentacoes,
+                is_sistemico = atributes.IsSistemico,
+                status = atributes.Status,
+                data_criacao = DateTime.Now
             };
 
             _dbContext.Processo.Add(novoProcesso);
@@ -129,14 +129,14 @@ namespace Stage_API.Controllers
             var processo = await _dbContext.Processo.FindAsync(Id);
             if (processo == null) { return NotFound("Falha ao atualizar processo."); }
 
-            if (!string.IsNullOrEmpty(atributes.Nome)) processo.Nome = atributes.Nome;
-            if (!string.IsNullOrEmpty(atributes.Descricao)) processo.Descricao = atributes.Descricao;
-            if (!string.IsNullOrEmpty(atributes.Ferramentas)) processo.Ferramentas = atributes.Ferramentas;
-            if (!string.IsNullOrEmpty(atributes.Responsaveis)) processo.Responsaveis = atributes.Responsaveis;
-            if (!string.IsNullOrEmpty(atributes.Documentacoes)) processo.Documentacoes = atributes.Documentacoes;            
-            if (!string.IsNullOrEmpty(atributes.Status)) processo.Status = atributes.Status;
-            processo.IsSistemico = atributes.IsSistemico;
-            processo.DataAlteracao = DateTime.Now;
+            if (!string.IsNullOrEmpty(atributes.Nome)) processo.nome = atributes.Nome;
+            if (!string.IsNullOrEmpty(atributes.Descricao)) processo.descricao = atributes.Descricao;
+            if (!string.IsNullOrEmpty(atributes.Ferramentas)) processo.ferramentas = atributes.Ferramentas;
+            if (!string.IsNullOrEmpty(atributes.Responsaveis)) processo.responsaveis = atributes.Responsaveis;
+            if (!string.IsNullOrEmpty(atributes.Documentacoes)) processo.documentos = atributes.Documentacoes;            
+            if (!string.IsNullOrEmpty(atributes.Status)) processo.status = atributes.Status;
+            processo.is_sistemico = atributes.IsSistemico;
+            processo.data_alteracao = DateTime.Now;
 
             await _dbContext.SaveChangesAsync();
 
@@ -146,7 +146,7 @@ namespace Stage_API.Controllers
         [HttpDelete("/api/ProcessoById")]
         public async Task<IActionResult> DeleteProcess(int Id)
         {
-            var subprocessos = _dbContext.Processo.Where(p => p.IdPai == Id);
+            var subprocessos = _dbContext.Processo.Where(p => p.processo_pai_id == Id);
             _dbContext.Processo.RemoveRange(subprocessos);
 
             var processo = await _dbContext.Processo.FindAsync(Id);
