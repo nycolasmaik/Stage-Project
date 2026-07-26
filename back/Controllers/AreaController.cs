@@ -30,14 +30,15 @@ namespace Stage_API.Controllers
             {
                 var obj = new
                 {
-                    Id = area.id,
-                    Nome = area.nome                                    
+                    area.id,
+                    area.nome,
+                    data_criacao = area.data_criacao?.ToString("dd/MM/yyyy HH:mm:ss") ?? "-"
                 };
 
                 areasFormatadas.Add(obj);
             }
 
-            return Ok(areas);
+            return Ok(areasFormatadas);
         }
 
         [HttpGet("/api/AreaById")]
@@ -61,7 +62,7 @@ namespace Stage_API.Controllers
             var novaArea = new Area
             {
                 nome = atributes.Nome,               
-                data_criacao = DateTime.Now
+                data_criacao = DateTime.UtcNow
             };
 
             _dbContext.Area.Add(novaArea);

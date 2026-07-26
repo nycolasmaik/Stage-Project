@@ -81,18 +81,17 @@ export default function ListagemAreas() {
     e.preventDefault();
     try {
       if (modoEdicaoProcesso) {
-        processoService.update(formProcesso.id, formProcesso)
-          .then((data) => toast.success(data.message))
-          .catch((error) => toast.error(error.data.message));
+        const data = await processoService.update(formProcesso.id, formProcesso);
+        toast.success(data.message);
       } else {
-        processoService.create(formProcesso)
-          .then((data) => toast.success(data.message))
-          .catch((error) => toast.error(error.data.message));
+        const data = await processoService.create(formProcesso)
+        toast.success(data.message);
       }
 
       setModalProcessoOpen(false);
       VerProcessos(formProcesso.idArea);
     } catch (error) {
+      toast.error(error.data.message)
       console.error("Erro ao concluir ação:", error);
     }
   };
@@ -102,12 +101,12 @@ export default function ListagemAreas() {
     try {
       const idProcesso = obj.processo.id;
       const idArea = obj.processo.idArea;
-      processoService.delete(idProcesso)
-        .then((data) => toast.success(data.message))
-        .catch((error) => toast.error(error.data.message));
+      const data = await processoService.delete(idProcesso)
+      toast.success(data.message);
 
       VerProcessos(idArea);
     } catch (err) {
+      toast.error(error.data.message)
       console.error("Erro ao remover:", err);
     }
   };
@@ -116,9 +115,13 @@ export default function ListagemAreas() {
 
   /* --- Função para buscar todas as áreas cadastradas --- */
   const carregarAreas = async () => {
-    areaService.getAll()
-      .then((data) => setAreas(data))
-      .catch((err) => console.error("Erro ao carregar areas:", err));
+    try {
+      const data = await areaService.getAll();
+      setAreas(data);
+    }
+    catch (err) {
+      console.error("Erro ao carregar areas:", err)
+    }
   };
   /* --- Chamar a função das áreas caso ocorra alguma mudança - Renderiza -- */
   useEffect(() => {
@@ -134,15 +137,15 @@ export default function ListagemAreas() {
         id_usuario_criacao: 0,
       };
 
-      areaService.create(dados)
-        .then((data) => toast.success(data.message))
-        .catch((error) => toast.error(error.data.message));
+      const data = await areaService.create(dados);
+      toast.success(data.message);
 
       setModalCriarOpen(false);
       setNomeAreaCriacao("");
 
       carregarAreas();
     } catch (err) {
+      toast.error(error.data.message)
       console.error("Erro ao salvar:", err);
     }
   };
@@ -164,14 +167,14 @@ export default function ListagemAreas() {
         id_usuario_criacao: 0,
       };
 
-      areaService.update(dados.id, dados)
-        .then((data) => toast.success(data.message))
-        .catch((error) => toast.error(error.data.message));
+      const data = await areaService.update(dados.id, dados);
+      toast.success(data.message);
 
       setModalEditarOpen(false);
 
       carregarAreas();
     } catch (err) {
+      toast.error(error.data.message);
       console.error("Erro ao salvar:", err);
     }
   };
@@ -190,14 +193,14 @@ export default function ListagemAreas() {
         id: areaParaDeletar.id,
       };
 
-      areaService.delete(dados.id, dados)
-        .then((data) => toast.success(data.message))
-        .catch((error) => toast.error(error.data.message));
+      const data = await areaService.delete(dados.id, dados);
+      toast.success(data.message);
 
       carregarAreas();
 
       setModalDeletarOpen(false);
     } catch (err) {
+      toast.error(error.data.message)
       console.error("Erro ao deletar:", err);
     }
   };
@@ -205,13 +208,12 @@ export default function ListagemAreas() {
   /* --- FUNÇÃO QUE CHAMA API QUE DA UM GET EM TODOS OS PROCESSOS DE UMA ÁREA --- */
   const VerProcessos = async (idArea) => {
     try {
-      const res = processoService.getByIdArea(idArea);
+      const res = await processoService.getByArea(idArea);
 
       setProcessosDaArea(res.data);
       setModalArvoreOpen(true);
     } catch (error) {
-      const msg =
-        error.response?.data?.message ||
+      const msg = error.response?.data?.message ||
         "Erro ao carregar a árvore de processos";
       toast.error(msg);
       setModalArvoreOpen(false);

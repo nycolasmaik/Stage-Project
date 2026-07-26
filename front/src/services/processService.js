@@ -7,12 +7,12 @@ export const processoService = {
   },
 
   update: async (id, processoData) => {
-    const response = await api.put(`/api/UpdateProcess?id=${id}`, processoData);
+    const response = await api.put(`api/UpdateProcess?id=${id}`, processoData);
     return response.data
   },
 
   create: async (areaData) => {
-    const response = await api.post('/api/CreateProcess', areaData);
+    const response = await api.post('api/CreateProcess', areaData);
     return response.data;
   },
 

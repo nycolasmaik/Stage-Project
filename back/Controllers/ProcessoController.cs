@@ -103,7 +103,7 @@ namespace Stage_API.Controllers
                 documentos = atributes.Documentacoes,
                 is_sistemico = atributes.IsSistemico,
                 status = atributes.Status,
-                data_criacao = DateTime.Now
+                data_criacao = DateTime.UtcNow
             };
 
             _dbContext.Processo.Add(novoProcesso);
@@ -136,7 +136,7 @@ namespace Stage_API.Controllers
             if (!string.IsNullOrEmpty(atributes.Documentacoes)) processo.documentos = atributes.Documentacoes;            
             if (!string.IsNullOrEmpty(atributes.Status)) processo.status = atributes.Status;
             processo.is_sistemico = atributes.IsSistemico;
-            processo.data_alteracao = DateTime.Now;
+            processo.data_alteracao = DateTime.UtcNow;
 
             await _dbContext.SaveChangesAsync();
 
